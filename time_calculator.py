@@ -5,22 +5,20 @@ def is_valid_day(day):
     ]
 
 def add_time(start, duration, start_day=None):
-    start, time_of_day = start.split()
-    start_hour_str, start_minute_str = start.split(':')
-    start_hour = int(start_hour_str)
-    start_minute = int(start_minute_str)
+    start, time_period = start.split()
 
-    duration_hour_str, duration_minute_str = duration.split(':')
-    duration_hour = int(duration_hour_str)
-    duration_minute = int(duration_minute_str)
+    start_hour, start_minute = map(int, start.split(':'))
+    duration_hour, duration_minute = map(int, duration.split(':'))
 
     runoff_minutes = 0
     runoff_hour = 0
     adjusted_hour = 0
-    times_of_day = { 'AM': 'PM', 'PM': 'AM'}
+    next_day = ''
+    time_periods = { 'AM': 'PM', 'PM': 'AM'}
 
     new_hour = start_hour + duration_hour
     new_minute = start_minute + duration_minute
+    current_time_period = time_period
 
     if start_minute + duration_minute > 59:
         runoff_minutes = (start_minute + duration_minute) - 60
@@ -34,6 +32,10 @@ def add_time(start, duration, start_day=None):
         new_hour = adjusted_hour % 12
 
         if new_hour % 12 == new_hour:
-            time_of_day = times_of_day[time_of_day]
+           time_period = time_periods[time_period]
 
-    return str(new_hour) + ":" + str(new_minute) + ' ' + time_of_day
+        # If PM changes to AM, that means the next day
+        if current_time_period == 'PM' and time_period == 'AM':
+            next_day = ' (next day)'
+
+    return str(new_hour) + ":" + str(new_minute) + ' ' + time_period + next_day
