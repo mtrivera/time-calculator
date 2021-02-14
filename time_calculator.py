@@ -36,10 +36,13 @@ def add_time(start, duration, start_day=None):
         new_hour = adjusted_hour % 12
 
         if new_hour % 12 == new_hour:
-           new_time_period = time_periods[time_period]
+            new_time_period = time_periods[time_period]
+            # If more than 24 hours, reset new time period, and use the start time period
+            if duration_hour >= 24:
+                new_time_period = ''
 
         # If time period changes, that means the next day
-        if new_time_period == 'AM' and time_period == 'PM':
+        if new_time_period == 'AM' and time_period == 'PM' or duration_hour >= 24:
             next_day = ' (next day)'
 
     # If time period changed update the original time period
