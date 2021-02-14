@@ -18,11 +18,15 @@ def add_time(start, duration, start_day=None):
 
     new_hour = start_hour + duration_hour
     new_minute = start_minute + duration_minute
-    current_time_period = time_period
+    new_time_period = ''
 
     if start_minute + duration_minute > 59:
         runoff_minutes = (start_minute + duration_minute) - 60
         runoff_hour += 1
+        # Use case for period change at 12
+        if (runoff_hour + new_hour) % 12 == 0:
+            new_hour = 12
+            time_period = time_periods[time_period]
         # If minutes is less than ten, append a leading zero
         if runoff_minutes < 10:
             new_minute = '0' + str(runoff_minutes)
@@ -32,10 +36,14 @@ def add_time(start, duration, start_day=None):
         new_hour = adjusted_hour % 12
 
         if new_hour % 12 == new_hour:
-           time_period = time_periods[time_period]
+           new_time_period = time_periods[time_period]
 
-        # If PM changes to AM, that means the next day
-        if current_time_period == 'PM' and time_period == 'AM':
+        # If time period changes, that means the next day
+        if new_time_period == 'AM' and time_period == 'PM':
             next_day = ' (next day)'
+
+    # If time period changed update the original time period
+    if new_time_period:
+        time_period = new_time_period
 
     return str(new_hour) + ":" + str(new_minute) + ' ' + time_period + next_day
