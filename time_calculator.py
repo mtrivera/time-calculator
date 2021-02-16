@@ -4,6 +4,11 @@ def is_valid_day(day):
         'thursday', 'friday', 'saturday', 'sunday'
     ]
 
+def update_time_period(days):
+    time_periods = ['AM', 'PM']
+    new_time_period_index = days % 2
+    return time_periods[new_time_period_index]
+
 def add_time(start, duration, start_day=None):
     start, time_period = start.split()
 
@@ -52,6 +57,7 @@ def add_time(start, duration, start_day=None):
     # If days is more than one, update next day string
     if day_count > 1:
         next_day = f' ({day_count} days later)'
+        time_period = update_time_period(day_count)
 
     # If time period changed update the original time period
     if new_time_period:
