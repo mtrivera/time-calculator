@@ -14,6 +14,7 @@ def add_time(start, duration, start_day=None):
     runoff_hour = 0
     adjusted_hour = 0
     next_day = ''
+    day_count = 0
     time_periods = { 'AM': 'PM', 'PM': 'AM'}
 
     new_hour = start_hour + duration_hour
@@ -31,6 +32,9 @@ def add_time(start, duration, start_day=None):
         if runoff_minutes < 10:
             new_minute = '0' + str(runoff_minutes)
 
+    # If larger than 24 hours, calculate the amount of days passed
+    day_count = round((start_hour + duration_hour + runoff_hour) / 24)
+
     if new_hour > 12:
         adjusted_hour = new_hour + runoff_hour
         new_hour = adjusted_hour % 12
@@ -44,6 +48,10 @@ def add_time(start, duration, start_day=None):
         # If time period changes, that means the next day
         if new_time_period == 'AM' and time_period == 'PM' or duration_hour >= 24:
             next_day = ' (next day)'
+
+    # If days is more than one, update next day string
+    if day_count > 1:
+        next_day = f' ({day_count} days later)'
 
     # If time period changed update the original time period
     if new_time_period:
