@@ -1,8 +1,19 @@
 def is_valid_day(day):
-    return day.lower() in [
-        'monday', 'tuesday', 'wednesday',
-        'thursday', 'friday', 'saturday', 'sunday'
+    return format_day(day) in [
+        'Monday', 'Tuesday', 'Wednesday',
+        'Thursday', 'Friday', 'Saturday', 'Sunday'
     ]
+
+def get_new_day(start_day, days_passed):
+    days = [
+        'Monday', 'Tuesday', 'Wednesday',
+        'Thursday', 'Friday', 'Saturday', 'Sunday'
+    ]
+    new_day_index = (days.index(format_day(start_day)) + days_passed) % 7
+    return days[new_day_index]
+
+def format_day(day):
+    return day[0].upper() + day[1:].lower()
 
 def update_time_period(days):
     time_periods = ['AM', 'PM']
@@ -11,14 +22,20 @@ def update_time_period(days):
 
 def add_time(start, duration, start_day=None):
     start, time_period = start.split()
-
     start_hour, start_minute = map(int, start.split(':'))
     duration_hour, duration_minute = map(int, duration.split(':'))
+
+    # If no duration value, return the original start time and time period
+    if duration_hour == 0 and duration_minute == 0:
+        if start_minute < 10:
+            start_minute = '0' + str(start_minute)
+        return str(start_hour) + ':' + str(start_minute) + ' ' + time_period
 
     runoff_minutes = 0
     runoff_hour = 0
     adjusted_hour = 0
     next_day = ''
+    new_day = ''
     day_count = 0
     time_periods = { 'AM': 'PM', 'PM': 'AM'}
 
@@ -59,8 +76,11 @@ def add_time(start, duration, start_day=None):
         next_day = f' ({day_count} days later)'
         time_period = update_time_period(day_count)
 
+    if start_day and is_valid_day(format_day(start_day)):
+        new_day = f', {format_day(get_new_day(start_day, day_count))}'
+
     # If time period changed update the original time period
     if new_time_period:
         time_period = new_time_period
 
-    return str(new_hour) + ":" + str(new_minute) + ' ' + time_period + next_day
+    return str(new_hour) + ":" + str(new_minute) + ' ' + time_period + new_day + next_day
